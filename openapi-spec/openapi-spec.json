@@ -338,8 +338,9 @@
     },
     "/identity/api/v2/user/reset-password" : {
       "post" : {
-        "operationId" : "OP_IDENT_USR_RESET_PASSWORD",
-        "summary" : "Reset password",
+        "operationId" : "reset_password",
+        "summary" : "Reset Password",
+        "description" : "Reset user password using JWT token",
         "tags" : [ "Identity / User" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -350,6 +351,9 @@
               "schema" : {
                 "type" : "object",
                 "properties" : {
+                  "email" : {
+                    "type" : "string"
+                  },
                   "password" : {
                     "type" : "string"
                   }
@@ -363,16 +367,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
@@ -394,8 +389,9 @@
     },
     "/identity/api/v2/user/change-email" : {
       "post" : {
-        "operationId" : "OP_IDENT_USR_CHANGE_EMAIL",
+        "operationId" : "change_email",
         "summary" : "Change user email",
+        "description" : "Sends token to new email",
         "tags" : [ "Identity / User" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -423,16 +419,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
@@ -444,8 +431,9 @@
     },
     "/identity/api/v2/user/verify-email-token" : {
       "post" : {
-        "operationId" : "OP_IDENT_USR_VERIFY_CHANGE_EMAIL_TOKEN",
-        "summary" : "Verify token sent for changing email",
+        "operationId" : "verify_email_token",
+        "summary" : "Verify Email Token",
+        "description" : "Verify token sent for changing email",
         "tags" : [ "Identity / User" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -455,8 +443,11 @@
             "application/json" : {
               "schema" : {
                 "type" : "object",
-                "required" : [ "new_email", "token" ],
+                "required" : [ "old_email", "new_email", "token" ],
                 "properties" : {
+                  "old_email" : {
+                    "type" : "string"
+                  },
                   "new_email" : {
                     "type" : "string"
                   },
@@ -473,16 +464,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
@@ -494,7 +476,7 @@
     },
     "/identity/api/v2/user/dashboard" : {
       "get" : {
-        "operationId" : "OP_IDENT_USR_GET_DASHBOARD",
+        "operationId" : "get_dashboard",
         "summary" : "Get user dashboard data",
         "tags" : [ "Identity / User" ],
         "security" : [ {
@@ -508,17 +490,16 @@
                   "type" : "object",
                   "required" : [ "available_credit", "email", "id", "name", "number", "picture_url", "role", "video_id", "video_name", "video_url" ],
                   "properties" : {
-                    "number" : {
-                      "type" : "string"
+                    "id" : {
+                      "type" : "number"
                     },
                     "name" : {
                       "type" : "string"
                     },
-                    "video_id" : {
-                      "type" : "number"
-                    },
-                    "video_url" : { },
                     "email" : {
+                      "type" : "string"
+                    },
+                    "number" : {
                       "type" : "string"
                     },
                     "role" : {
@@ -527,16 +508,27 @@
                     "available_credit" : {
                       "type" : "number"
                     },
-                    "video_name" : { },
-                    "id" : {
+                    "video_id" : {
                       "type" : "number"
                     },
+                    "video_name" : { },
+                    "video_url" : { },
                     "picture_url" : { }
                   }
                 }
               }
             },
             "description" : ""
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "Email not registered"
           }
         }
       },
@@ -544,7 +536,7 @@
     },
     "/identity/api/v2/user/pictures" : {
       "post" : {
-        "operationId" : "OP_IDENT_USR_UPDATE_PROFILE_PIC",
+        "operationId" : "update_profile_pic",
         "summary" : "Update user profile picture",
         "tags" : [ "Identity / User" ],
         "security" : [ {
@@ -554,7 +546,13 @@
           "content" : {
             "multipart/form-data" : {
               "schema" : {
-                "type" : "string"
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                }
               }
             }
           }
@@ -588,6 +586,16 @@
               }
             },
             "description" : ""
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
           }
         }
       },
@@ -595,15 +603,15 @@
     },
     "/identity/api/v2/user/videos" : {
       "post" : {
-        "summary" : "Add a video to this user's profile.",
-        "operationId" : "OP_IDENT_USR_ADD_PROFILE_VIDEO",
+        "summary" : "Upload User profile video",
+        "operationId" : "upload_profile_video",
         "tags" : [ "Identity / User" ],
         "security" : [ {
           "bearerAuth" : [ ]
         } ],
         "requestBody" : {
           "content" : {
-            "application/json" : {
+            "multipart/form-data" : {
               "schema" : {
                 "required" : [ "file" ],
                 "type" : "object",
@@ -621,20 +629,31 @@
           "200" : {
             "description" : "OK",
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/ProfileVideo"
                 }
               }
             }
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
           }
         }
       }
     },
     "/identity/api/v2/user/videos/{video_id}" : {
       "get" : {
-        "summary" : "Get the video associated with the user's profile.",
-        "operationId" : "OP_IDENT_USR_GET_PROFILE_VIDEO",
+        "operationId" : "get_profile_video",
+        "summary" : "Get User Profile Video",
+        "description" : "Get the video associated with the user's profile.",
         "tags" : [ "Identity / User" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -652,18 +671,29 @@
           "200" : {
             "description" : "OK",
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/ProfileVideo"
                 }
               }
             }
+          },
+          "204" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "Video not found"
           }
         }
       },
       "put" : {
-        "summary" : "Update the video identified by video_id in this user's profile.",
-        "operationId" : "OP_IDENT_USR_MOD_PROFILE_VIDEO",
+        "summary" : "Update User Profile Video by video_id",
+        "description" : "Update the video identified by video_id in this user's profile.",
+        "operationId" : "update_profile_video",
         "tags" : [ "Identity / User" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -691,18 +721,29 @@
           "200" : {
             "description" : "OK",
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/ProfileVideo"
                 }
               }
             }
+          },
+          "204" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "Video not found"
           }
         }
       },
       "delete" : {
-        "summary" : "Delete the video identified by video_id from this user's profile.",
-        "operationId" : "OP_IDENT_USR_DEL_PROFILE_VIDEO",
+        "summary" : "Delete Profile Video by video_id",
+        "description" : "Delete the video identified by video_id from this user's profile.",
+        "operationId" : "delete_profile_video",
         "tags" : [ "Identity / User" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -726,14 +767,35 @@
                 }
               }
             }
+          },
+          "403" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "Forbidden"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "Video not found"
           }
         }
       }
     },
     "/identity/api/v2/user/videos/convert_video" : {
       "get" : {
-        "summary" : "Convert the format for the specified video.",
-        "operationId" : "OP_IDENT_USR_CONVERT_PROFILE_VIDEO",
+        "summary" : "Convert Profile Video",
+        "description" : "Convert the format for the specified video.",
+        "operationId" : "convert_profile_video",
         "tags" : [ "Identity / User" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -761,42 +823,11 @@
         }
       }
     },
-    "/identity/api/v2/user/videos/list_sample_videos" : {
-      "get" : {
-        "tags" : [ "Identity / User" ],
-        "operationId" : "OP_IDENT_USR_LIST_SAMPLE_VIDEOS",
-        "summary" : "List a selection of sample videos.",
-        "responses" : {
-          "200" : {
-            "description" : "The file names of the sample videos.",
-            "content" : {
-              "text/plain" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "parameters" : [ {
-        "name" : "number",
-        "description" : "The number of sample videos to return.",
-        "in" : "query",
-        "required" : true,
-        "schema" : {
-          "type" : "integer"
-        },
-        "example" : 10
-      } ]
-    },
     "/identity/api/v2/admin/videos/{video_id}" : {
       "delete" : {
-        "summary" : "As admin, delete the video identified by video_id.",
-        "operationId" : "OP_IDENT_ADMIN_DEL_PROFILE_VIDEO",
+        "summary" : "Delete Profile Video Admin",
+        "description" : "Delete profile video of other users by video_id as admin",
+        "operationId" : "admin_delete_profile_video",
         "tags" : [ "Identity / Admin" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -814,173 +845,39 @@
           "200" : {
             "description" : "OK",
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/identity/api/v1/admin/users/find" : {
-      "get" : {
-        "tags" : [ "Identity / Admin" ],
-        "operationId" : "OP_IDENT_ADMIN_USERS_FIND",
-        "summary" : "Get details of a User given their phone number.",
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ],
-        "parameters" : [ {
-          "name" : "number",
-          "in" : "query",
-          "description" : "Phone number of the user to locate.",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "example" : "4156895423"
-          }
-        } ],
-        "responses" : {
-          "200" : {
+          },
+          "403" : {
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "number", "password", "role", "created_on", "id", "email" ],
-                  "properties" : {
-                    "number" : {
-                      "type" : "string"
-                    },
-                    "password" : {
-                      "type" : "string"
-                    },
-                    "role" : {
-                      "type" : "integer"
-                    },
-                    "created_on" : {
-                      "type" : "string",
-                      "format" : "date"
-                    },
-                    "id" : {
-                      "type" : "integer"
-                    },
-                    "email" : {
-                      "type" : "string",
-                      "format" : "email"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
-            "description" : "User details corresponding to the phone number."
+            "description" : "Forbidden"
           },
           "404" : {
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
-            "description" : "User not found."
-          }
-        }
-      }
-    },
-    "/identity/api/v1/admin/users/list" : {
-      "get" : {
-        "tags" : [ "Identity / Admin" ],
-        "operationId" : "OP_IDENT_ADMIN_USERS_LIST",
-        "summary" : "List all registered User(s).",
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ],
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "object",
-                    "required" : [ "number", "role", "created_on", "id", "email" ],
-                    "properties" : {
-                      "number" : {
-                        "type" : "string"
-                      },
-                      "role" : {
-                        "type" : "integer"
-                      },
-                      "created_on" : {
-                        "type" : "string",
-                        "format" : "date"
-                      },
-                      "id" : {
-                        "type" : "integer"
-                      },
-                      "email" : {
-                        "type" : "string",
-                        "format" : "email"
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "description" : "Array of registered User objects."
-          },
-          "404" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "object",
-                    "required" : [ "number", "role", "created_on", "id", "email" ],
-                    "properties" : {
-                      "number" : {
-                        "type" : "string"
-                      },
-                      "role" : {
-                        "type" : "integer"
-                      },
-                      "created_on" : {
-                        "type" : "string",
-                        "format" : "date"
-                      },
-                      "id" : {
-                        "type" : "integer"
-                      },
-                      "email" : {
-                        "type" : "string",
-                        "format" : "email"
-                      }
-                    }
-                  }
-                },
-                "example" : [ ]
-              }
-            },
-            "description" : "No User(s) found."
+            "description" : "Video not found"
           }
         }
       }
     },
     "/identity/api/v2/vehicle/vehicles" : {
       "get" : {
-        "operationId" : "OP_IDENT_VEHICLE_GET_VEHICLES",
+        "operationId" : "get_vehicles",
         "summary" : "Get user vehicles",
         "tags" : [ "Identity / Vehicle" ],
         "security" : [ {
@@ -996,6 +893,27 @@
                     "type" : "object",
                     "required" : [ "id", "model", "owner", "pincode", "status", "uuid", "vehicleLocation", "vin", "year" ],
                     "properties" : {
+                      "id" : {
+                        "type" : "number"
+                      },
+                      "uuid" : {
+                        "type" : "string"
+                      },
+                      "year" : {
+                        "type" : "number"
+                      },
+                      "status" : {
+                        "type" : "string"
+                      },
+                      "vin" : {
+                        "type" : "string"
+                      },
+                      "pincode" : {
+                        "type" : "string"
+                      },
+                      "owner" : {
+                        "$ref" : "#/components/schemas/User"
+                      },
                       "model" : {
                         "type" : "object",
                         "required" : [ "fuel_type", "id", "model", "vehicle_img", "vehiclecompany" ],
@@ -1026,9 +944,6 @@
                           }
                         }
                       },
-                      "uuid" : {
-                        "type" : "string"
-                      },
                       "vehicleLocation" : {
                         "type" : "object",
                         "required" : [ "id", "latitude", "longitude" ],
@@ -1043,22 +958,6 @@
                             "type" : "string"
                           }
                         }
-                      },
-                      "year" : {
-                        "type" : "number"
-                      },
-                      "id" : {
-                        "type" : "number"
-                      },
-                      "status" : {
-                        "type" : "string"
-                      },
-                      "vin" : {
-                        "type" : "string"
-                      },
-                      "owner" : { },
-                      "pincode" : {
-                        "type" : "string"
                       }
                     }
                   }
@@ -1066,6 +965,16 @@
               }
             },
             "description" : ""
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
           }
         }
       },
@@ -1073,7 +982,7 @@
     },
     "/identity/api/v2/vehicle/add_vehicle" : {
       "post" : {
-        "operationId" : "OP_IDENT_VEHICLE_ADD_VEHICLE",
+        "operationId" : "add_vehicle",
         "summary" : "Add the user vehicle",
         "tags" : [ "Identity / Vehicle" ],
         "security" : [ {
@@ -1102,16 +1011,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
@@ -1121,16 +1021,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
@@ -1142,8 +1033,9 @@
     },
     "/identity/api/v2/vehicle/{vehicleId}/location" : {
       "get" : {
-        "operationId" : "OP_IDENT_VEHICLE_GET_LOCATION",
-        "summary" : "Get user's vehicle location",
+        "operationId" : "get_location",
+        "summary" : "Get Vehicle Location",
+        "description" : "Get user's vehicle location",
         "tags" : [ "Identity / Vehicle" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -1187,20 +1079,11 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
-            "description" : ""
+            "description" : "Invalid vehicle_id for User"
           }
         }
       },
@@ -1216,8 +1099,9 @@
     },
     "/identity/api/v2/vehicle/resend_email" : {
       "post" : {
-        "operationId" : "OP_IDENT_VEHICLE_RESEND_EMAIL",
-        "summary" : "Resend vehicles details to be added to the user dashboard",
+        "operationId" : "vehicle_resend_email",
+        "summary" : "Resend Vehicle Details Email",
+        "description" : "Resend vehicles details to be added to the user dashboard",
         "tags" : [ "Identity / Vehicle" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -1227,16 +1111,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
@@ -1245,45 +1130,6 @@
         }
       },
       "parameters" : [ ]
-    },
-    "/identity/privacy/user_agent" : {
-      "get" : {
-        "tags" : [ "Identity / Privacy" ],
-        "operationId" : "OP_IDENT_PRIVACY_USERAGENT",
-        "summary" : "Get the value of the user agent request header. This data is logged. crAPI is committed to your privacy and being transparent about all your data that is processed.",
-        "security" : [ ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
-                }
-              }
-            },
-            "description" : ""
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "User-Agent",
-        "in" : "header",
-        "description" : "Information used to identify your browser.",
-        "required" : true,
-        "schema" : {
-          "type" : "string",
-          "example" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
-        }
-      } ]
     },
     "/community/api/v2/community/posts/{postId}" : {
       "get" : {
@@ -3131,6 +2977,27 @@
             "maxLength" : 60,
             "minLength" : 3,
             "type" : "string"
+          }
+        }
+      },
+      "ProfileVideo" : {
+        "type" : "object",
+        "required" : [ "id", "video_name", "converstion_params", "video", "user" ],
+        "properties" : {
+          "id" : {
+            "type" : "number"
+          },
+          "video_name" : {
+            "type" : "string"
+          },
+          "conversion_params" : {
+            "type" : "string"
+          },
+          "video" : {
+            "type" : "string"
+          },
+          "user" : {
+            "$ref" : "#/components/schemas/User"
           }
         }
       },
