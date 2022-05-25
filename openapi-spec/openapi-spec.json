@@ -443,7 +443,7 @@
             "application/json" : {
               "schema" : {
                 "type" : "object",
-                "required" : [ "old_meail", "new_email", "token" ],
+                "required" : [ "old_email", "new_email", "token" ],
                 "properties" : {
                   "old_email" : {
                     "type" : "string"
@@ -877,7 +877,7 @@
     },
     "/identity/api/v2/vehicle/vehicles" : {
       "get" : {
-        "operationId" : "OP_IDENT_VEHICLE_GET_VEHICLES",
+        "operationId" : "get_vehicles",
         "summary" : "Get user vehicles",
         "tags" : [ "Identity / Vehicle" ],
         "security" : [ {
@@ -893,6 +893,27 @@
                     "type" : "object",
                     "required" : [ "id", "model", "owner", "pincode", "status", "uuid", "vehicleLocation", "vin", "year" ],
                     "properties" : {
+                      "id" : {
+                        "type" : "number"
+                      },
+                      "uuid" : {
+                        "type" : "string"
+                      },
+                      "year" : {
+                        "type" : "number"
+                      },
+                      "status" : {
+                        "type" : "string"
+                      },
+                      "vin" : {
+                        "type" : "string"
+                      },
+                      "pincode" : {
+                        "type" : "string"
+                      },
+                      "owner" : {
+                        "$ref" : "#/components/schemas/User"
+                      },
                       "model" : {
                         "type" : "object",
                         "required" : [ "fuel_type", "id", "model", "vehicle_img", "vehiclecompany" ],
@@ -923,9 +944,6 @@
                           }
                         }
                       },
-                      "uuid" : {
-                        "type" : "string"
-                      },
                       "vehicleLocation" : {
                         "type" : "object",
                         "required" : [ "id", "latitude", "longitude" ],
@@ -940,22 +958,6 @@
                             "type" : "string"
                           }
                         }
-                      },
-                      "year" : {
-                        "type" : "number"
-                      },
-                      "id" : {
-                        "type" : "number"
-                      },
-                      "status" : {
-                        "type" : "string"
-                      },
-                      "vin" : {
-                        "type" : "string"
-                      },
-                      "owner" : { },
-                      "pincode" : {
-                        "type" : "string"
                       }
                     }
                   }
@@ -963,6 +965,16 @@
               }
             },
             "description" : ""
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
           }
         }
       },
@@ -970,7 +982,7 @@
     },
     "/identity/api/v2/vehicle/add_vehicle" : {
       "post" : {
-        "operationId" : "OP_IDENT_VEHICLE_ADD_VEHICLE",
+        "operationId" : "add_vehicle",
         "summary" : "Add the user vehicle",
         "tags" : [ "Identity / Vehicle" ],
         "security" : [ {
@@ -999,16 +1011,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
@@ -1018,16 +1021,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
@@ -1039,8 +1033,9 @@
     },
     "/identity/api/v2/vehicle/{vehicleId}/location" : {
       "get" : {
-        "operationId" : "OP_IDENT_VEHICLE_GET_LOCATION",
-        "summary" : "Get user's vehicle location",
+        "operationId" : "get_location",
+        "summary" : "Get Vehicle Location",
+        "description" : "Get user's vehicle location",
         "tags" : [ "Identity / Vehicle" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -1084,20 +1079,11 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
-            "description" : ""
+            "description" : "Invalid vehicle_id for User"
           }
         }
       },
@@ -1113,8 +1099,9 @@
     },
     "/identity/api/v2/vehicle/resend_email" : {
       "post" : {
-        "operationId" : "OP_IDENT_VEHICLE_RESEND_EMAIL",
-        "summary" : "Resend vehicles details to be added to the user dashboard",
+        "operationId" : "vehicle_resend_email",
+        "summary" : "Resend Vehicle Details Email",
+        "description" : "Resend vehicles details to be added to the user dashboard",
         "tags" : [ "Identity / Vehicle" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -1124,16 +1111,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CRAPIResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CRAPIResponse"
                 }
               }
             },
@@ -1142,45 +1130,6 @@
         }
       },
       "parameters" : [ ]
-    },
-    "/identity/privacy/user_agent" : {
-      "get" : {
-        "tags" : [ "Identity / Privacy" ],
-        "operationId" : "OP_IDENT_PRIVACY_USERAGENT",
-        "summary" : "Get the value of the user agent request header. This data is logged. crAPI is committed to your privacy and being transparent about all your data that is processed.",
-        "security" : [ ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object",
-                  "required" : [ "message", "status" ],
-                  "properties" : {
-                    "message" : {
-                      "type" : "string"
-                    },
-                    "status" : {
-                      "type" : "number"
-                    }
-                  }
-                }
-              }
-            },
-            "description" : ""
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "User-Agent",
-        "in" : "header",
-        "description" : "Information used to identify your browser.",
-        "required" : true,
-        "schema" : {
-          "type" : "string",
-          "example" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
-        }
-      } ]
     },
     "/community/api/v2/community/posts/{postId}" : {
       "get" : {
