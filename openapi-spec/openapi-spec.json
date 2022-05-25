@@ -1298,7 +1298,9 @@
           "200" : {
             "content" : {
               "application/json" : {
-                "schema" : { }
+                "schema" : {
+                  "$ref" : "#/components/schemas/Post"
+                }
               }
             },
             "description" : ""
@@ -1723,19 +1725,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "CreatedAt", "amount", "coupon_code" ],
-                  "properties" : {
-                    "CreatedAt" : {
-                      "type" : "string"
-                    },
-                    "amount" : {
-                      "type" : "string"
-                    },
-                    "coupon_code" : {
-                      "type" : "string"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/Coupon"
                 }
               }
             },
@@ -1758,8 +1748,9 @@
     "/workshop/api/shop/products" : {
       "parameters" : [ ],
       "get" : {
-        "operationId" : "OP_WORKSHOP_SHOP_GET_PRODUCTS",
-        "summary" : "Get products for the shop",
+        "operationId" : "get_products",
+        "summary" : "Get Products",
+        "description" : "Used to get products for the shop",
         "tags" : [ "Workshop / Shop" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -1776,25 +1767,7 @@
                       "type" : "number"
                     },
                     "products" : {
-                      "type" : "array",
-                      "items" : {
-                        "type" : "object",
-                        "required" : [ "id", "image_url", "name", "price" ],
-                        "properties" : {
-                          "id" : {
-                            "type" : "number"
-                          },
-                          "image_url" : {
-                            "type" : "string"
-                          },
-                          "name" : {
-                            "type" : "string"
-                          },
-                          "price" : {
-                            "type" : "string"
-                          }
-                        }
-                      }
+                      "$ref" : "#/components/schemas/Product"
                     }
                   }
                 }
@@ -1805,8 +1778,9 @@
         }
       },
       "post" : {
-        "operationId" : "OP_WORKSHOP_SHOP_CREATE_PRODUCT",
-        "summary" : "Add the specified product to the product catalog.",
+        "operationId" : "add_new_product",
+        "summary" : "Add A New Product",
+        "description" : "Used to add the specified product to the product catalog.",
         "tags" : [ "Workshop / Shop" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -1848,8 +1822,9 @@
     },
     "/workshop/api/shop/orders" : {
       "post" : {
-        "operationId" : "OP_WORKSHOP_SHOP_CREATE_ORDER",
-        "summary" : "Create a new order for a product in the shop.",
+        "operationId" : "create_order",
+        "summary" : "Create Order",
+        "description" : "Used to create a new order for a product in the shop.",
         "tags" : [ "Workshop / Shop" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -1912,8 +1887,9 @@
     },
     "/workshop/api/shop/orders/{order_id}" : {
       "put" : {
-        "operationId" : "OP_WORKSHOP_SHOP_UPDATE_ORDER",
-        "summary" : "Update the order specified by the order_id.",
+        "operationId" : "update_order",
+        "summary" : "Update Order",
+        "description" : "Used to update the order specified by the order_id.",
         "tags" : [ "Workshop / Shop" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -1994,8 +1970,9 @@
         }
       },
       "get" : {
-        "operationId" : "OP_WORKSHOP_SHOP_GET_ORDER_ID",
-        "summary" : "Get the order details for order identified by order_id.",
+        "operationId" : "get_order_byID",
+        "summary" : "Get Order Based on ID",
+        "description" : "Used to get the order details for order identified by order_id.",
         "tags" : [ "Workshop / Shop" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -2049,8 +2026,9 @@
     },
     "/workshop/api/shop/orders/all" : {
       "get" : {
-        "operationId" : "OP_WORKSHOP_SHOP_GET_ORDERS",
-        "summary" : "Get user's past orders",
+        "operationId" : "get_orders",
+        "summary" : "Get Orders",
+        "description" : "Used to get user's past orders",
         "tags" : [ "Workshop / Shop" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -2124,16 +2102,17 @@
       },
       "parameters" : [ ]
     },
-    "/workshop/api/shop/orders/return_order/{order_id}" : {
+    "/workshop/api/shop/orders/return_order" : {
       "post" : {
-        "operationId" : "OP_WORKSHOP_SHOP_RETURN_PURCHASE",
-        "summary" : "Return order specified by the order_id",
+        "operationId" : "return_order",
+        "summary" : "Return Order",
+        "description" : "Used to return order specified by the order_id",
         "tags" : [ "Workshop / Shop" ],
         "security" : [ {
           "bearerAuth" : [ ]
         } ],
         "parameters" : [ {
-          "in" : "path",
+          "in" : "query",
           "name" : "order_id",
           "schema" : {
             "type" : "integer"
@@ -2207,8 +2186,9 @@
     },
     "/workshop/api/shop/apply_coupon" : {
       "post" : {
-        "operationId" : "OP_WORKSHOP_SHOP_APPLY_COUPON",
-        "summary" : "Apply the coupon for the current user",
+        "operationId" : "apply_coupon",
+        "summary" : "Apply Coupon",
+        "description" : "Used to apply the coupon for the current user.",
         "tags" : [ "Workshop / Shop" ],
         "security" : [ {
           "bearerAuth" : [ ]
@@ -2273,8 +2253,9 @@
     },
     "/workshop/api/shop/return_qr_code" : {
       "get" : {
-        "operationId" : "OP_WORKSHOP_SHOP_GET_QRCODE",
-        "summary" : "Get the return qr code image for UPS shipments.",
+        "operationId" : "get_workshop_qr_code",
+        "summary" : "Get Workshop",
+        "description" : "Used to get the return qr code image for UPS shipments.",
         "tags" : [ "Workshop / Shop" ],
         "security" : [ { } ],
         "parameters" : [ {
@@ -2512,7 +2493,7 @@
       "parameters" : [ ]
     },
     "/workshop/api/mechanic/receive_report" : {
-      "post" : {
+      "get" : {
         "operationId" : "create_service_report",
         "summary" : "Create and Assign a Service Report",
         "description" : "Used to create the service report and assign to the mechanic",
