@@ -56,6 +56,7 @@ export const POST_CREATED = "Post Created.";
 export const POST_NOT_CREATED = "Could not add new post";
 export const COMMENT_ADDED = "Comment Added";
 export const COMMENT_NOT_ADDED = "Could not add comment";
+export const PROFILE_PIC_TOO_LARGE = "File size should be less than 30kB";
 export const PROFILE_PIC_UPDATED = "Profile pic updated successfully";
 export const PROFILE_PIC_NOT_UPDATED = "Could not upload Picture";
 export const VIDEO_UPDATED = "Video updated successfully";

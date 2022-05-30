@@ -26,7 +26,7 @@ import {
   convertVideoAction,
 } from "../../actions/profileActions";
 import responseTypes from "../../constants/responseTypes";
-import { SUCCESS_MESSAGE, FAILURE_MESSAGE } from "../../constants/messages";
+import { SUCCESS_MESSAGE, FAILURE_MESSAGE, PROFILE_PIC_TOO_LARGE } from "../../constants/messages";
 
 const ProfileContainer = (props) => {
   const {
@@ -44,20 +44,28 @@ const ProfileContainer = (props) => {
   const [errorMessage, setErrorMessage] = React.useState("");
 
   const handleUploadProfilePic = (event) => {
-    const callback = (res, data) => {
-      if (res === responseTypes.SUCCESS) {
-        Modal.success({
-          title: SUCCESS_MESSAGE,
-          content: data,
-        });
-      } else {
+    const fsize = event.target.files[0].size;
+
+    if (Math.round(fsize/1024) > 30) {
         Modal.error({
-          title: FAILURE_MESSAGE,
-          content: data,
+          title: PROFILE_PIC_TOO_LARGE,
         });
-      }
+    } else {
+        const callback = (res, data) => {
+          if (res === responseTypes.SUCCESS) {
+            Modal.success({
+              title: SUCCESS_MESSAGE,
+              content: data,
+            });
+          } else {
+            Modal.error({
+              title: FAILURE_MESSAGE,
+              content: data,
+            });
+          }
+        };
+        uploadProfilePic({ callback, accessToken, file: event.target.files[0] });
     };
-    uploadProfilePic({ callback, accessToken, file: event.target.files[0] });
   };
 
   const handleUploadVideo = (event) => {
