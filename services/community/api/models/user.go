@@ -15,6 +15,7 @@
 package models
 
 import (
+	"encoding/base64"
 	"errors"
 	"strings"
 	"time"
@@ -30,7 +31,7 @@ var autherID uint64
 var nickname string
 var userEmail string
 
-//var picurl string
+var picurl string
 var vehicleID string
 
 //Author model
@@ -101,6 +102,7 @@ func FindAuthorByEmail(email string, db *gorm.DB) (*uint64, error) {
 	var number *uint64
 	var name string
 	var picture []byte
+    var pictureEncoded string
 	var uuid string
 	userEmail = email
 
@@ -111,12 +113,18 @@ func FindAuthorByEmail(email string, db *gorm.DB) (*uint64, error) {
 
 	autherID = id
 	//fetch name and picture from for token user
-	row1 := db.Table("user_details").Where("user_id = ?", id).Select("name, picture").Row()
+	row1 := db.Table("user_details").Where("user_id = ?", id).Select("name, lo_get(picture)").Row()
 	row1.Scan(&name, &picture)
 
 	nickname = name
 	row2 := db.Table("vehicle_details").Where("owner_id = ?", id).Select("uuid").Row()
 	row2.Scan(&uuid)
 	vehicleID = uuid
+
+    pictureEncoded = base64.StdEncoding.EncodeToString(picture)
+    if pictureEncoded != "" {
+        picurl = "data:image/jpeg;base64," + pictureEncoded
+    }
+
 	return number, err
 }

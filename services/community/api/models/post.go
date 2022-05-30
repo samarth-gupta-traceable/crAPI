@@ -73,6 +73,7 @@ func Prepare() Author {
 	u.Nickname = nickname
 	u.Email = userEmail
 	u.VehicleID = vehicleID
+    u.Picurl = picurl
 	u.CreatedAt = time.Now()
 	return u
 }
