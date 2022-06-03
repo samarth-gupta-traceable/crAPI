@@ -134,7 +134,7 @@ services:
       - GO_SERVICE=crapi-community:8087
       - JAVA_SERVICE=crapi-identity:8080
       - PYTHON_SERVICE=crapi-workshop:8000
-      - INSTALL_TRACEABLE=false
+      - INSTALL_TRACEABLE=true
       - TA_ADDRESS=traceable-agent
       - TA_SERVICE_NAME=crapi-web
     depends_on:
@@ -176,7 +176,7 @@ services:
         limits:
           cpus: '0.3'
           memory: 128M
-  
+
   mongodb:
     container_name: mongodb
     image: 'mongo'
@@ -206,7 +206,7 @@ services:
     environment:
       MH_MONGO_URI: admin:crapisecretpassword@mongodb:27017
       MH_STORAGE: mongodb
-    ports: 
+    ports:
     #  - "127.0.0.1:1025:1025" # smtp server
       - "127.0.0.1:8025:8025" # Mail ui
     healthcheck:
@@ -224,8 +224,9 @@ services:
     container_name: traceable-agent
     image: traceableai/traceable-agent
     environment:
-      - TA_ENVIRONMENT=crapi
-      - TA_REFRESH_TOKEN=
+      - TA_REMOTE_ENDPOINT=api-dev.traceable.ai:443
+      - TA_ENVIRONMENT=crapi-samarth
+      - TA_REFRESH_TOKEN=<token>
     profiles:
       - traceable
 
